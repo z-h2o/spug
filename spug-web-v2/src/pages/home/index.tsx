@@ -1,23 +1,29 @@
 /**
- * 工作台首页
+ * 工作台页面
  */
 import React from 'react';
-import { Card, Row, Col, Typography } from 'antd';
-
-const { Title } = Typography;
+import { Row, Col } from 'antd';
+import { Breadcrumb } from '@/components';
+import Notice from './Notice';
+import Todo from './Todo';
+import Nav from './Nav';
 
 const Home: React.FC = () => {
   return (
     <div>
-      <Title level={2}>工作台</Title>
-      <Row gutter={[16, 16]}>
-        <Col span={24}>
-          <Card>
-            <Title level={4}>欢迎使用 Spug 运维管理平台</Title>
-            <p>这是基于 React 18 + Vite + Ant Design 重构的新版本</p>
-          </Card>
+      <Breadcrumb>
+        <Breadcrumb.Item>首页</Breadcrumb.Item>
+        <Breadcrumb.Item>工作台</Breadcrumb.Item>
+      </Breadcrumb>
+      <Row gutter={12}>
+        <Col span={16}>
+          <Todo />
+        </Col>
+        <Col span={8}>
+          <Notice />
         </Col>
       </Row>
+      <Nav />
     </div>
   );
 };

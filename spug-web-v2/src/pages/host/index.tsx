@@ -1,45 +1,64 @@
 /**
  * 主机管理页面
  */
-import React from 'react';
-import { Card, Typography, Button, Table } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { AuthButton } from '@/components';
-
-const { Title } = Typography;
+import React, { useEffect } from 'react';
+import { Row, Col } from 'antd';
+import { CodeOutlined } from '@ant-design/icons';
+import { AuthDiv, Breadcrumb, AuthButton } from '@/components';
+import Group from './Group';
+import HostTable from './Table';
+import HostDetail from './Detail';
+import HostForm from './Form';
+import Import from './Import';
+import CloudImport from './CloudImport';
+import BatchSync from './BatchSync';
+import useHostStore from '@/stores/hostStore';
 
 const Host: React.FC = () => {
-  const columns = [
-    { title: '主机名', dataIndex: 'name', key: 'name' },
-    { title: 'IP地址', dataIndex: 'ip', key: 'ip' },
-    { title: '状态', dataIndex: 'status', key: 'status' },
-    { title: '操作', key: 'action', render: () => (
-      <>
-        <Button type="link">编辑</Button>
-        <Button type="link" danger>删除</Button>
-      </>
-    )}
-  ];
+  const { initial } = useHostStore();
 
-  const data = [
-    { key: 1, name: 'server-01', ip: '192.168.1.10', status: '在线' },
-    { key: 2, name: 'server-02', ip: '192.168.1.11', status: '在线' },
-    { key: 3, name: 'server-03', ip: '192.168.1.12', status: '离线' },
-  ];
+  useEffect(() => {
+    initial();
+  }, [initial]);
+
+  function openTerminal() {
+    window.open('/ssh');
+  }
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <Title level={2}>主机管理</Title>
-        <AuthButton auth="host.host.add" type="primary" icon={<PlusOutlined />}>
-          新建主机
-        </AuthButton>
-      </div>
-      
-      <Card>
-        <Table columns={columns} dataSource={data} />
-      </Card>
-    </div>
+    <AuthDiv auth="host.host.view">
+      <Breadcrumb
+        extra={
+          <AuthButton
+            auth="host.console.view|host.console.list"
+            type="primary"
+            icon={<CodeOutlined />}
+            onClick={openTerminal}
+          >
+            Web 终端
+          </AuthButton>
+        }
+      >
+        <Breadcrumb.Item>首页</Breadcrumb.Item>
+        <Breadcrumb.Item>主机管理</Breadcrumb.Item>
+      </Breadcrumb>
+
+      <Row gutter={12}>
+        <Col span={6}>
+          <Group />
+        </Col>
+        <Col span={18}>
+          <HostTable />
+        </Col>
+      </Row>
+
+      {/* 子组件 */}
+      <HostDetail />
+      <HostForm />
+      <Import />
+      <CloudImport />
+      <BatchSync />
+    </AuthDiv>
   );
 };
 

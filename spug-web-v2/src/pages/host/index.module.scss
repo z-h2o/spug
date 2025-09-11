@@ -1,0 +1,84 @@
+@import "@/styles/variables.scss";
+
+.group {
+  .treeNode {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    
+    .title {
+      flex: 1;
+      margin-left: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .number {
+      background: #f0f0f0;
+      border-radius: 10px;
+      color: #666;
+      font-size: 12px;
+      min-width: 18px;
+      height: 18px;
+      line-height: 18px;
+      text-align: center;
+      padding: 0 4px;
+    }
+  }
+}
+
+// Form 样式
+.formAddress1 {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.formAddress2 {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.formAddress3 {
+  display: inline-block;
+}
+
+// 主机详情编辑样式
+.hostExtendEdit {
+  .ant-descriptions-item-content {
+    input, .ant-select, .ant-picker {
+      max-width: 200px;
+    }
+  }
+}
+
+// Tag 输入框样式
+.tagInput {
+  width: 78px;
+  margin-right: 8px;
+  vertical-align: top;
+}
+
+.tagNumberInput {
+  width: 64px;
+  margin-right: 8px;
+  vertical-align: top;
+}
+
+.tagAdd {
+  background: #fff;
+  border-style: dashed;
+  cursor: pointer;
+}
+
+// 批量同步样式
+.batchSync {
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+}
+
+// 步骤样式
+.steps {
+  margin-bottom: 24px;
+}
