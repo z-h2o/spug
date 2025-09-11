@@ -1,0 +1,6 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+TS文件的类型要全部规范的定义好, 并且放到单独的src/types文件下来统一维护, 要尽可能的不用any类型, 除非无法知道接口返回的参数可以用any

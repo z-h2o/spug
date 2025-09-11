@@ -1,0 +1,45 @@
+{
+  "name": "spug-web-v2",
+  "private": true,
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.0.1",
+    "ace-builds": "^1.43.3",
+    "antd": "^5.27.3",
+    "axios": "^1.11.0",
+    "dayjs": "^1.11.18",
+    "echarts": "^6.0.0",
+    "echarts-for-react": "^3.0.2",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0",
+    "react-ace": "^14.0.1",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.26.0",
+    "xterm": "^5.3.0",
+    "xterm-addon-fit": "^0.8.0",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@types/lodash": "^4.17.20",
+    "@types/node": "^24.3.1",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "sass": "^1.92.1",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.39.1",
+    "vite": "^7.1.2"
+  }
+}
