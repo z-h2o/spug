@@ -20,7 +20,7 @@ import styles from './index.module.scss';
 
 dayjs.extend(relativeTime);
 
-const DeployConfirm: React.FC = () => {
+const DeployConfirm = () => {
   return (
     <div>
       <div>确认发布方式</div>
@@ -30,7 +30,7 @@ const DeployConfirm: React.FC = () => {
   );
 };
 
-const RequestTable: React.FC = () => {
+const RequestTable = () => {
   const {
     isFetching,
     getDataSource,
@@ -46,7 +46,7 @@ const RequestTable: React.FC = () => {
     rollback
   } = useRequestStore();
 
-  const DoAction: React.FC<{ info: RequestRecord }> = ({ info }) => {
+  const DoAction = ({ info }: { info: RequestRecord }) => {
     const { host_ids, fail_host_ids } = info;
     return (
       <Popconfirm

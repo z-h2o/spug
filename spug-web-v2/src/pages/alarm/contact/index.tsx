@@ -2,9 +2,15 @@
  * 报警联系人页面
  */
 import React from 'react';
-import { Breadcrumb, AuthDiv, PagePlaceholder } from '@/components';
+import { Input } from 'antd';
+import { SearchForm, AuthDiv, Breadcrumb } from '@/components';
+import Table from './Table';
+import Form from './Form';
+import useAlarmContactStore from '@/stores/alarmContactStore';
 
 const AlarmContact: React.FC = () => {
+  const { f_name, setFName, formVisible } = useAlarmContactStore();
+
   return (
     <AuthDiv auth="alarm.contact.view">
       <Breadcrumb>
@@ -12,11 +18,18 @@ const AlarmContact: React.FC = () => {
         <Breadcrumb.Item>报警中心</Breadcrumb.Item>
         <Breadcrumb.Item>报警联系人</Breadcrumb.Item>
       </Breadcrumb>
-      
-      <PagePlaceholder 
-        title="报警联系人"
-        description="此功能正在开发中，敬请期待..."
-      />
+      <SearchForm>
+        <SearchForm.Item span={8} title="姓名">
+          <Input 
+            allowClear 
+            value={f_name} 
+            onChange={e => setFName(e.target.value)} 
+            placeholder="请输入" 
+          />
+        </SearchForm.Item>
+      </SearchForm>
+      <Table />
+      {formVisible && <Form />}
     </AuthDiv>
   );
 };
