@@ -1,0 +1,17 @@
+/**
+ * 任务调度页面样式
+ */
+
+.steps {
+  margin-bottom: 24px;
+}
+
+.delIcon {
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s;
+  
+  &:hover {
+    color: #ff4d4f;
+  }
+}

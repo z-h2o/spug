@@ -11,12 +11,15 @@ importers:
       '@ant-design/icons':
         specifier: ^6.0.1
         version: 6.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/moment':
+        specifier: ^2.13.0
+        version: 2.13.0
       ace-builds:
         specifier: ^1.43.3
         version: 1.43.3
       antd:
         specifier: ^5.27.3
-        version: 5.27.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 5.27.3(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: ^1.11.0
         version: 1.11.0
@@ -32,6 +35,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      moment:
+        specifier: ^2.30.1
+        version: 2.30.1
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -771,6 +777,10 @@ packages:
   '@types/lodash@4.17.20':
     resolution: {integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==}
 
+  '@types/moment@2.13.0':
+    resolution: {integrity: sha512-DyuyYGpV6r+4Z1bUznLi/Y7HpGn4iQ4IVcGn8zrr1P4KotKLdH0sbK1TFR6RGyX6B+G8u83wCzL+bpawKU/hdQ==}
+    deprecated: This is a stub types definition for Moment (https://github.com/moment/moment). Moment provides its own type definitions, so you don't need @types/moment installed!
+
   '@types/node@24.3.1':
     resolution: {integrity: sha512-3vXmQDXy+woz+gnrTvuvNrPzekOi+Ds0ReMxw0LzBiK3a+1k0kQn9f2NWk+lgD4rJehFUmYy2gMhJ2ZI+7YP9g==}
 
@@ -1320,6 +1330,9 @@ packages:
   minimatch@9.0.5:
     resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
     engines: {node: '>=16 || 14 >=14.17'}
+
+  moment@2.30.1:
+    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
 
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
@@ -2454,6 +2467,10 @@ snapshots:
 
   '@types/lodash@4.17.20': {}
 
+  '@types/moment@2.13.0':
+    dependencies:
+      moment: 2.30.1
+
   '@types/node@24.3.1':
     dependencies:
       undici-types: 7.10.0
@@ -2593,7 +2610,7 @@ snapshots:
     dependencies:
       color-convert: 2.0.1
 
-  antd@5.27.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  antd@5.27.3(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@ant-design/colors': 7.2.1
       '@ant-design/cssinjs': 1.24.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2625,7 +2642,7 @@ snapshots:
       rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rc-notification: 5.6.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rc-pagination: 5.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-picker: 4.11.3(dayjs@1.11.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      rc-picker: 4.11.3(dayjs@1.11.18)(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rc-progress: 4.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rc-rate: 2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rc-resize-observer: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3093,6 +3110,8 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.2
 
+  moment@2.30.1: {}
+
   ms@2.1.3: {}
 
   nanoid@3.3.11: {}
@@ -3307,7 +3326,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  rc-picker@4.11.3(dayjs@1.11.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-picker@4.11.3(dayjs@1.11.18)(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.28.4
       '@rc-component/trigger': 2.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3319,6 +3338,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       dayjs: 1.11.18
+      moment: 2.30.1
 
   rc-progress@4.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:

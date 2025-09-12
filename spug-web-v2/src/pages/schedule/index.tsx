@@ -82,9 +82,9 @@ const Schedule: React.FC = () => {
       <ScheduleTable />
       
       {/* 子组件 */}
-      <ScheduleForm />
-      <ScheduleInfo />
-      <ScheduleRecord />
+      {formVisible && <ScheduleForm />}
+      {infoVisible && <ScheduleInfo />}
+      {recordVisible && <ScheduleRecord />}
     </AuthDiv>
   );
 };

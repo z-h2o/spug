@@ -1,98 +1,185 @@
 /**
- * 监控中心 Store
+ * 监控管理状态管理
  */
 import { create } from 'zustand';
 import http from '@/libs/http';
-import { includes } from '@/utils/common';
-import { cloneDeep } from '@/utils/helper';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import { message } from 'antd';
+import { includes } from '@/utils/functools';
+import moment from 'moment';
+import { cloneDeep } from 'lodash';
 
-dayjs.extend(relativeTime);
-
-interface MonitorRecord {
-  id: number;
+export interface MonitorRecord {
+  id?: number;
   name: string;
+  desc?: string;
   type: string;
   type_alias: string;
   group: string;
-  rate: number;
+  targets: string[] | number[];
+  extra?: string;
   is_active: boolean;
   latest_run_time?: string;
-  latest_run_time_alias?: string;
-  desc?: string;
-  targets?: any[];
+  latest_run_time_alias?: string | null;
+  rate?: number;
+  threshold?: number;
+  notify_grp?: number[];
+  notify_mode?: string[];
+  quiet?: number;
 }
 
-interface OverviewRecord {
+export interface MonitorOverview {
   id: number;
   name: string;
   type: string;
   group: string;
-  target: string;
   status: string;
-  latest_run_time?: string;
+  target: string;
+  duration?: string;
   desc?: string;
+  latest_run_time?: string;
 }
 
 interface MonitorState {
-  // 数据状态
+  autoReload: boolean | null;
   records: MonitorRecord[];
-  overviews: OverviewRecord[];
+  record: Partial<MonitorRecord>;
   types: string[];
   groups: string[];
-  record: Partial<MonitorRecord>;
+  overviews: MonitorOverview[];
   page: number;
-  
-  // UI状态
   isFetching: boolean;
-  ovFetching: boolean;
   formVisible: boolean;
-  autoReload: boolean | null;
-  
-  // 过滤状态
+  ovFetching: boolean;
+
   f_name?: string;
   f_type?: string;
   f_active: string;
   f_group?: string;
-  
-  // 计算属性方法
-  getDataSource: () => MonitorRecord[];
-  getOvDataSource: () => OverviewRecord[];
-  
-  // 操作方法
+
   fetchRecords: () => Promise<void>;
   fetchOverviews: () => Promise<void>;
   showForm: (info?: MonitorRecord) => void;
-  
-  // 设置方法
   setFormVisible: (visible: boolean) => void;
   setPage: (page: number) => void;
+  updateRecord: (updates: Partial<MonitorRecord>) => void;
+  deleteRecord: (id: number) => Promise<void>;
+  toggleActive: (id: number, is_active: boolean) => Promise<void>;
+  getDataSource: () => MonitorRecord[];
+  getOvDataSource: () => MonitorOverview[];
+  setFilters: (filters: { f_name?: string; f_type?: string; f_active?: string; f_group?: string }) => void;
   setAutoReload: (autoReload: boolean | null) => void;
-  setFilterName: (name?: string) => void;
-  setFilterType: (type?: string) => void;
+  setFilterGroup: (group: string) => void;
+  setFilterType: (type: string) => void;
+  setFilterName: (name: string) => void;
   setFilterActive: (active: string) => void;
-  setFilterGroup: (group?: string) => void;
 }
 
 const useMonitorStore = create<MonitorState>((set, get) => ({
-  // 初始状态
+  autoReload: null,
   records: [],
-  overviews: [],
+  record: {},
   types: [],
   groups: [],
-  record: {},
+  overviews: [],
   page: 0,
   isFetching: false,
-  ovFetching: false,
   formVisible: false,
-  autoReload: null,
-  f_name: undefined,
-  f_type: undefined,
-  f_active: '',
-  f_group: undefined,
+  ovFetching: false,
 
-  // 计算属性方法
+  f_name: '',
+  f_type: '',
+  f_active: '',
+  f_group: '',
+
+  fetchRecords: async () => {
+    set({ isFetching: true });
+    try {
+      const res = await http.get('/api/monitor/');
+      const { groups, detections } = res.data || res;
+      const tmp = new Set<string>();
+      
+      detections.forEach((item: MonitorRecord) => {
+        tmp.add(item.type_alias);
+        const value = item.latest_run_time;
+        item.latest_run_time_alias = value ? moment(value).fromNow() : null;
+      });
+
+      set({
+        types: Array.from(tmp),
+        records: detections,
+        groups,
+        isFetching: false
+      });
+    } catch (error) {
+      set({ isFetching: false });
+    }
+  },
+
+  fetchOverviews: async () => {
+    const { autoReload } = get();
+    if (autoReload === false) return;
+    
+    set({ ovFetching: true });
+    try {
+      const res = await http.get('/api/monitor/overview/');
+      set({ overviews: res.data || res, ovFetching: false });
+      
+      if (autoReload) {
+        setTimeout(() => get().fetchOverviews(), 5000);
+      }
+    } catch (error) {
+      set({ ovFetching: false });
+    }
+  },
+
+  showForm: (info) => {
+    let record: Partial<MonitorRecord>;
+    if (info) {
+      record = cloneDeep(info);
+    } else if (get().record.id || !get().record.type) {
+      record = { type: '1', targets: [] };
+    } else {
+      record = get().record;
+    }
+    
+    set({
+      record,
+      page: 0,
+      formVisible: true
+    });
+  },
+
+  setFormVisible: (visible) => set({ formVisible: visible }),
+  setPage: (page) => set({ page }),
+
+  updateRecord: (updates) => {
+    set(state => ({
+      record: { ...state.record, ...updates }
+    }));
+  },
+
+  deleteRecord: async (id: number) => {
+    try {
+      await http.delete('/api/monitor/', { params: { id } });
+      message.success('删除成功');
+      get().fetchRecords();
+      get().fetchOverviews();
+    } catch (error) {
+      // Error handled by http interceptor
+    }
+  },
+
+  toggleActive: async (id: number, is_active: boolean) => {
+    try {
+      await http.patch('/api/monitor/', { id, is_active });
+      message.success('操作成功');
+      get().fetchRecords();
+      get().fetchOverviews();
+    } catch (error) {
+      // Error handled by http interceptor
+    }
+  },
+
   getDataSource: () => {
     const { records, f_active, f_name, f_type, f_group } = get();
     let filteredRecords = records;
@@ -130,69 +217,16 @@ const useMonitorStore = create<MonitorState>((set, get) => ({
     return filteredRecords;
   },
 
-  // 操作方法
-  fetchRecords: async () => {
-    set({ isFetching: true });
-    try {
-      const res: any = await http.get('/api/monitor/');
-      const { groups, detections } = res;
-      const tmp = new Set<string>();
-      
-      const processedDetections = detections.map((item: MonitorRecord) => {
-        tmp.add(item.type_alias);
-        const value = item.latest_run_time;
-        item.latest_run_time_alias = value ? dayjs(value).fromNow() : undefined;
-        return item;
-      });
-      
-      set({
-        types: Array.from(tmp),
-        records: processedDetections,
-        groups
-      });
-    } finally {
-      set({ isFetching: false });
-    }
+  setFilters: (filters) => {
+    set(state => ({ ...state, ...filters }));
   },
 
-  fetchOverviews: async () => {
-    const { autoReload } = get();
-    if (autoReload === false) return;
-    
-    set({ ovFetching: true });
-    try {
-      const res: any = await http.get('/api/monitor/overview/');
-      set({ overviews: res });
-    } finally {
-      set({ ovFetching: false });
-      
-      // 自动刷新逻辑
-      if (get().autoReload) {
-        setTimeout(() => get().fetchOverviews(), 5000);
-      }
-    }
-  },
-
-  showForm: (info) => {
-    if (info) {
-      set({ record: cloneDeep(info) });
-    } else {
-      const currentRecord = get().record;
-      if (currentRecord.id || !currentRecord.type) {
-        set({ record: { type: '1', targets: [] } });
-      }
-    }
-    set({ page: 0, formVisible: true });
-  },
-
-  // 设置方法
-  setFormVisible: (visible) => set({ formVisible: visible }),
-  setPage: (page) => set({ page }),
   setAutoReload: (autoReload) => set({ autoReload }),
-  setFilterName: (name) => set({ f_name: name }),
-  setFilterType: (type) => set({ f_type: type }),
-  setFilterActive: (active) => set({ f_active: active }),
+  
   setFilterGroup: (group) => set({ f_group: group }),
+  setFilterType: (type) => set({ f_type: type }),
+  setFilterName: (name) => set({ f_name: name }),
+  setFilterActive: (active) => set({ f_active: active }),
 }));
 
 export default useMonitorStore;

@@ -43,7 +43,7 @@ const Sider: React.FC<SiderProps> = ({ collapsed }) => {
             label: route.title,
             children
           };
-        } else if (route.path) {
+        } else if (route.path && route.title) {
           // 普通菜单项
           return {
             key: route.path,

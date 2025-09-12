@@ -67,6 +67,8 @@ interface ScheduleState {
   setFilterActive: (active: string) => void;
   setFilterName: (name?: string) => void;
   setFilterType: (type?: string) => void;
+  setTargets: (targets: (any | undefined)[]) => void;
+  updateRecord: (updates: Partial<ScheduleRecord>) => void;
 }
 
 const useScheduleStore = create<ScheduleState>((set, get) => ({
@@ -176,6 +178,12 @@ const useScheduleStore = create<ScheduleState>((set, get) => ({
   setFilterActive: (active) => set({ f_active: active }),
   setFilterName: (name) => set({ f_name: name }),
   setFilterType: (type) => set({ f_type: type }),
+  setTargets: (targets) => set({ targets }),
+  updateRecord: (updates) => {
+    set(state => ({
+      record: { ...state.record, ...updates }
+    }));
+  },
 }));
 
 export default useScheduleStore;
