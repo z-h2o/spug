@@ -3,14 +3,6 @@
  */
 
 /**
- * 检查字符串是否包含搜索词（不区分大小写）
- */
-export function includes(str: string, searchStr: string): boolean {
-  if (!str || !searchStr) return false;
-  return str.toLowerCase().includes(searchStr.toLowerCase());
-}
-
-/**
  * 深度克隆对象
  */
 export function cloneDeep<T>(obj: T): T {

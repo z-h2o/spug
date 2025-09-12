@@ -1,0 +1,138 @@
+
+.index {
+  display: flex;
+  gap: 24px;
+  height: calc(100vh - 200px);
+}
+
+.left {
+  flex: 1;
+}
+
+.right {
+  width: 320px;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.title {
+  height: 40px;
+  line-height: 40px;
+  padding: 0 16px;
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.inner {
+  height: calc(100% - 40px);
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  .host {
+    color: #52c41a;
+    font-size: 16px;
+    margin-right: 8px;
+  }
+
+  .upload {
+    color: #1890ff;
+    font-size: 16px;
+    margin-right: 8px;
+  }
+
+  .sh {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 4px;
+    background: #52c41a;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 8px;
+  }
+
+  .python {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 4px;
+    background: #1890ff;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 8px;
+  }
+
+  .number {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 10px;
+    background: #f0f0f0;
+    color: #666;
+    font-size: 12px;
+    margin-right: 8px;
+  }
+
+  .command {
+    flex: 1;
+    font-size: 13px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .desc {
+    font-size: 12px;
+    color: #999;
+    margin-left: 8px;
+  }
+}
+
+.table {
+  :global(.ant-table-tbody > tr > td) {
+    padding: 8px 12px;
+  }
+}
+
+.tips {
+  color: #1890ff;
+  text-decoration: none;
+
+  &:hover {
+    color: #40a9ff;
+  }
+}
+
+:global(.btn) {
+  cursor: pointer;
+  color: #1890ff;
+  transition: all 0.3s;
+
+  &:hover {
+    color: #40a9ff;
+  }
+}

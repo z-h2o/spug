@@ -11,3 +11,4 @@ export { default as TableCard } from './TableCard';
 export { default as Action } from './Action';
 export { default as SearchForm } from './SearchForm';
 export { default as LinkButton } from './LinkButton';
+export { default as ACEditor } from './ACEditor';

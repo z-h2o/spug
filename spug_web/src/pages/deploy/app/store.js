@@ -44,6 +44,11 @@ class Store {
           Object.assign(item, lds.pick(this.records[`a${item.id}`], ['isLoaded', 'deploys']));
           tmp[`a${item.id}`] = item
         }
+        console.log(
+          '%c 打印=>tmp: ',
+          'font-size:18px;color:#fff;background:#00b85a',
+          JSON.parse(JSON.stringify(tmp))
+        )
         this.records = tmp
       })
       .finally(() => this.isFetching = false)

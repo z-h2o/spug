@@ -2,17 +2,15 @@
  * SSH 终端页面
  */
 import React from 'react';
-import { Card, Typography } from 'antd';
-
-const { Title } = Typography;
+import { PagePlaceholder } from '@/components';
 
 const SSH: React.FC = () => {
   return (
-    <div style={{ padding: 24, minHeight: '100vh', backgroundColor: '#f0f2f5' }}>
-      <Card>
-        <Title level={2}>SSH 终端</Title>
-        <p>SSH 终端功能开发中...</p>
-      </Card>
+    <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <PagePlaceholder 
+        title="SSH 终端"
+        description="此功能正在开发中，敬请期待..."
+      />
     </div>
   );
 };
