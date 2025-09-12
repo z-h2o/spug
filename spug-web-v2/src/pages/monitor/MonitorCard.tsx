@@ -106,7 +106,7 @@ const MonitorCard: React.FC = () => {
     <Card 
       title="总览" 
       style={{ marginBottom: 24 }} 
-      bodyStyle={{ padding: '12px 24px' }} 
+      styles={{ body: { padding: '12px 24px' }}}
       extra={
         <Space size="middle">
           <Space>

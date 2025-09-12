@@ -1,0 +1,71 @@
+.appSelector {
+  display: flex;
+  background-color: #fff;
+  padding: 16px 0;
+  min-height: 500px;
+
+  .left {
+    flex: 0 0 220px;
+    border-right: 1px solid #e8e8e8;
+    overflow: hidden;
+  }
+
+  .right {
+    flex: 1;
+    padding: 8px 40px;
+  }
+
+  .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    color: rgba(0, 0, 0, .85);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+
+    .text {
+      padding-right: 12px;
+      width: 300px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .appItem {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: #fafafa;
+    border-radius: 2px;
+
+    :global(.anticon) {
+      color: #1890ff;
+      margin-right: 16px;
+    }
+
+    .body {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .key {
+      color: #999;
+    }
+  }
+
+  .appItem:hover {
+    cursor: pointer;
+    background: #e6f7ff;
+  }
+
+  .tips {
+    margin-top: 32px;
+    color: #888;
+  }
+}

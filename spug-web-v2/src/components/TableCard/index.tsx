@@ -23,7 +23,7 @@ const TableCard: React.FC<TableCardProps> = ({
   ...tableProps
 }) => {
   const cardTitle = (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '70px' }}>
       <div>{title}</div>
       <Space>
         {actions}
@@ -40,7 +40,7 @@ const TableCard: React.FC<TableCardProps> = ({
   );
 
   return (
-    <Card title={cardTitle} bodyStyle={{ padding: 0 }}>
+    <Card title={cardTitle} styles={{ body: { padding: '10px 20px' }}}>
       <Table
         size="middle"
         scroll={{ x: 'max-content' }}

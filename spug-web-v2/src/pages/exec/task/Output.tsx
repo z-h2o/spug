@@ -160,7 +160,7 @@ const Output: React.FC<OutputProps> = ({ onBack }) => {
             title={
               items.find(([id]) => id === activeId)?.[1]?.title || '执行结果'
             }
-            bodyStyle={{ padding: 0 }}
+            styles={{ body: { padding: 0 }}}
           >
             <div ref={terminalRef} className={styles.terminalContainer} />
           </Card>

@@ -60,7 +60,7 @@ const Nav: React.FC = () => {
       <Card
         title="便捷导航"
         className={styles.nav}
-        bodyStyle={{ paddingBottom: 0, minHeight: 166 }}
+        styles={{ body: { paddingBottom: 0, minHeight: 166 }}}
         extra={
           <AuthButton 
             auth="admin" 

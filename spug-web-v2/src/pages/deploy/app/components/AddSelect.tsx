@@ -50,7 +50,7 @@ const AddSelect: React.FC = () => {
       <div className={styles.cardBlock}>
         <Card
           style={{ width: 300, cursor: 'pointer' }}
-          bodyStyle={{ display: 'flex' }}
+          styles={{ body: { display: 'flex' }}}
           onClick={switchExt1}
         >
           <div style={{ marginRight: 16 }}>
@@ -65,7 +65,7 @@ const AddSelect: React.FC = () => {
         </Card>
         <Card
           style={{ width: 300, cursor: 'pointer' }}
-          bodyStyle={{ display: 'flex' }}
+          styles={{ body: { display: 'flex' }}}
           onClick={switchExt2}
         >
           <div style={{ marginRight: 16 }}>

@@ -1,0 +1,130 @@
+.miniConsole {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  
+  .console {
+    :deep(.ant-modal-content) {
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    :global(.ant-modal-header) {
+      border-bottom: 1px solid #f0f0f0;
+      padding: 0 10px 10px 0
+    }
+    
+    :global(.ant-modal-body) {
+      padding: 16px;
+    }
+  }
+}
+
+.console {
+  :global(.ant-modal-content) {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  :global(.ant-modal-header) {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 0 10px 10px 0;
+  }
+  
+  :global(.ant-modal-body) {
+    width: 100%;
+    overflow: auto;
+  }
+  
+  :global(.ant-steps-item-title) {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  :global(.ant-steps-item-description) {
+    margin-top: 8px;
+  }
+  
+  :global(.ant-collapse) {
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    
+    :global(.ant-collapse-header) {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+    
+    :global(.ant-collapse-content-box) {
+      padding: 0;
+    }
+  }
+}
+
+.approve {
+  :global(.ant-form-item-label) {
+    text-align: left;
+  }
+}
+
+.item {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  z-index: 1000;
+  cursor: pointer;
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    
+    .title {
+      font-weight: 500;
+      flex: 1;
+    }
+  }
+}
+
+.collapse {
+  overflow: auto;
+
+  .header {
+    display: flex;
+    align-items: center;
+    
+    .title {
+      margin-right: 16px;
+      min-width: 100px;
+    }
+    
+    .step {
+      flex: 1;
+    }
+    
+    .codeIcon {
+      margin-left: 16px;
+      cursor: pointer;
+      
+      &:hover {
+        color: #1890ff;
+      }
+    }
+  }
+}
+
+.miniIcon {
+  cursor: pointer;
+  padding: 4px;
+  font-size: 14px;
+  margin-right: 30px;
+  margin-top: -6px;
+  color: #8c8c8c;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+}

@@ -91,7 +91,7 @@ interface DeployAppState {
   
   // 操作方法
   fetchRecords: () => Promise<void>;
-  loadDeploys: (app_id: number) => Promise<void>;
+  loadDeploys: (app_id: number) => Promise<DeployRecord[]>;
   showForm: (info?: Partial<AppRecord>) => void;
   showExtForm: (app_id: number, info?: Partial<DeployRecord>, isClone?: boolean, isReadOnly?: boolean) => void;
   showAutoDeploy: (deploy: Partial<DeployRecord>) => void;
@@ -170,17 +170,21 @@ export const useDeployAppStore = create<DeployAppState>((set, get) => ({
     }
   },
 
-  loadDeploys: async (app_id: number) => {
+  loadDeploys: async (app_id: number): Promise<DeployRecord[]> => {
     try {
       const { records } = get();
+      const res: DeployRecord[] = await http.get('/api/app/deploy/', { params: { app_id } });
+      
       if (records[`a${app_id}`]) {
         records[`a${app_id}`].isLoaded = true;
-        const res: any = await http.get('/api/app/deploy/', { params: { app_id } });
         records[`a${app_id}`].deploys = res;
         set({ records: { ...records } });
       }
+      
+      return res;
     } catch (error) {
       console.error('Failed to load deploys:', error);
+      return [];
     }
   },
 

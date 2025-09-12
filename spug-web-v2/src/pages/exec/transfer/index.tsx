@@ -211,7 +211,7 @@ const Transfer: React.FC = () => {
             type="inner"
             title="分发目标"
             style={{ margin: '24px 0' }}
-            bodyStyle={{ paddingBottom: 0 }}
+            styles={{ body: { paddingBottom: 0 }}}
             extra={
               <Tooltip
                 className={styles.tips}

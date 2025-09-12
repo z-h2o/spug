@@ -119,7 +119,7 @@ const AlarmTrend: React.FC = () => {
     <Card
       loading={loading}
       title="报警趋势"
-      bodyStyle={{ height: 353 }}
+      styles={{ body: { height: 353 }}}
       extra={
         <Cascader
           changeOnSelect

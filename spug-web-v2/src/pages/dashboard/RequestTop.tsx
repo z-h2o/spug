@@ -106,7 +106,7 @@ const RequestTop: React.FC = () => {
       loading={loading}
       title="发布申请Top20"
       style={{ marginTop: 20 }}
-      bodyStyle={{ height: 353 }}
+      styles={{ body: { height: 353 }}}
       extra={
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <span

@@ -109,7 +109,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onCancel, onOk }) =
       onCancel={onCancel}
       footer={null}
       width={800}
-      bodyStyle={{ padding: '16px 24px' }}
+      styles={{body: { padding: '16px 24px' }}}
     >
       <Space direction="vertical" style={{ width: '100%' }}>
         <Space>

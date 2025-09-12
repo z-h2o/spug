@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * 权限管理工具
  */
@@ -15,6 +16,13 @@ let permission: Permission = {
 };
 
 export let X_TOKEN: string | null = null;
+
+/**
+ * 获取当前token
+ */
+export function getToken(): string | null {
+  return X_TOKEN || localStorage.getItem('token');
+}
 
 // 检测移动设备
 export const isMobile = /Android|iPhone/i.test(navigator.userAgent);

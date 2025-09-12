@@ -136,7 +136,7 @@ const HostSelector: React.FC<HostSelectorProps> = ({
         onOk={handleOk}
         onCancel={handleCancel}
         width={800}
-        bodyStyle={{ padding: '16px 24px' }}
+        styles={ {body: { padding: '16px 24px' }}}
       >
         <Space direction="vertical" style={{ width: '100%' }}>
           <Input

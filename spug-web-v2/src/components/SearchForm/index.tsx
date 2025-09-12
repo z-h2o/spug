@@ -24,7 +24,7 @@ const SearchForm: React.FC<SearchFormProps> & {
       size="small" 
       title={title} 
       style={{ marginBottom: 16, ...style }}
-      bodyStyle={{ paddingBottom: 8 }}
+      styles={{ body: { paddingBottom: 8 } }}
     >
       <Row gutter={16}>
         {children}
@@ -37,9 +37,9 @@ const SearchFormItem: React.FC<SearchFormItemProps> = ({ title, span = 8, childr
   return (
     <Col span={span}>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-        <div style={{ width: 80, textAlign: 'right', marginRight: 8, flexShrink: 0 }}>
+        {title && <div style={{ width: 80, textAlign: 'right', marginRight: 8, flexShrink: 0 }}>
           {title}:
-        </div>
+        </div>}
         <div style={{ flex: 1 }}>
           {children}
         </div>
