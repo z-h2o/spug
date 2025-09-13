@@ -4,12 +4,12 @@
 import React from 'react';
 import { Input } from 'antd';
 import { SearchForm, AuthDiv, Breadcrumb } from '@/components';
-import AccountTable from './Table';
-import AccountForm from './Form';
-import useAccountStore from '@/stores/accountStore';
+import Table from './Table';
+import Form from './Form';
+import useSystemAccountStore from '@/stores/systemAccountStore';
 
 const SystemAccount: React.FC = () => {
-  const { f_name, formVisible, setFilterName } = useAccountStore();
+  const { f_name, formVisible, setFName } = useSystemAccountStore();
 
   return (
     <AuthDiv auth="system.account.view">
@@ -24,15 +24,15 @@ const SystemAccount: React.FC = () => {
           <Input 
             allowClear 
             value={f_name} 
-            onChange={e => setFilterName(e.target.value)} 
+            onChange={e => setFName(e.target.value)} 
             placeholder="请输入" 
           />
         </SearchForm.Item>
       </SearchForm>
       
-      <AccountTable />
+      <Table />
       
-      {formVisible && <AccountForm />}
+      {formVisible && <Form />}
     </AuthDiv>
   );
 };

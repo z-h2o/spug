@@ -8,7 +8,7 @@ import zhCN from 'antd/locale/zh_CN';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import Login from '@/pages/login';
-import SSH from '@/pages/ssh';
+import SSH from '@/pages/ssh/index';
 import MainLayout from '@/layout';
 import '@/styles/global.scss';
 

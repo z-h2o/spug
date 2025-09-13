@@ -1,22 +1,44 @@
 /**
- * 个人信息页面
+ * 个人中心页面
  */
-import React from 'react';
-import { Breadcrumb, PagePlaceholder } from '@/components';
+import React, { useState } from 'react';
+import { Menu } from 'antd';
+import { Breadcrumb } from '@/components';
+import Basic from './Basic';
+import Reset from './Reset';
+import styles from './index.module.scss';
 
 const WelcomeInfo: React.FC = () => {
+  const [selectedKeys, setSelectedKeys] = useState(['basic']);
+
+  const handleMenuSelect = ({ selectedKeys }: { selectedKeys: string[] }) => {
+    setSelectedKeys(selectedKeys);
+  };
+
   return (
-    <>
+    <div>
       <Breadcrumb>
         <Breadcrumb.Item>首页</Breadcrumb.Item>
-        <Breadcrumb.Item>个人信息</Breadcrumb.Item>
+        <Breadcrumb.Item>个人中心</Breadcrumb.Item>
       </Breadcrumb>
-      
-      <PagePlaceholder 
-        title="个人信息"
-        description="此功能正在开发中，敬请期待..."
-      />
-    </>
+      <div className={styles.container}>
+        <div className={styles.left}>
+          <Menu
+            mode="inline"
+            selectedKeys={selectedKeys}
+            style={{ border: 'none' }}
+            onSelect={handleMenuSelect}
+          >
+            <Menu.Item key="basic">基本设置</Menu.Item>
+            <Menu.Item key="reset">修改密码</Menu.Item>
+          </Menu>
+        </div>
+        <div className={styles.right}>
+          {selectedKeys[0] === 'basic' && <Basic />}
+          {selectedKeys[0] === 'reset' && <Reset />}
+        </div>
+      </div>
+    </div>
   );
 };
 
