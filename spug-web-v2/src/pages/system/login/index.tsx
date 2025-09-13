@@ -2,9 +2,14 @@
  * 登录日志页面
  */
 import React from 'react';
-import { Breadcrumb, AuthDiv, PagePlaceholder } from '@/components';
+import { Input } from 'antd';
+import { SearchForm, AuthDiv, Breadcrumb } from '@/components';
+import Table from './Table';
+import useSystemLoginStore from '@/stores/systemLoginStore';
 
 const SystemLogin: React.FC = () => {
+  const { f_name, f_ip, setFName, setFIp } = useSystemLoginStore();
+
   return (
     <AuthDiv auth="system.login.view">
       <Breadcrumb>
@@ -12,11 +17,25 @@ const SystemLogin: React.FC = () => {
         <Breadcrumb.Item>系统管理</Breadcrumb.Item>
         <Breadcrumb.Item>登录日志</Breadcrumb.Item>
       </Breadcrumb>
-      
-      <PagePlaceholder 
-        title="登录日志"
-        description="此功能正在开发中，敬请期待..."
-      />
+      <SearchForm>
+        <SearchForm.Item span={8} title="账户名称">
+          <Input 
+            allowClear 
+            value={f_name} 
+            onChange={e => setFName(e.target.value)} 
+            placeholder="请输入" 
+          />
+        </SearchForm.Item>
+        <SearchForm.Item span={8} title="登录IP">
+          <Input 
+            allowClear 
+            value={f_ip} 
+            onChange={e => setFIp(e.target.value)} 
+            placeholder="请输入" 
+          />
+        </SearchForm.Item>
+      </SearchForm>
+      <Table />
     </AuthDiv>
   );
 };

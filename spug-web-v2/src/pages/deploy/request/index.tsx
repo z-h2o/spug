@@ -4,6 +4,7 @@
 import React, { useEffect } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Select, DatePicker } from 'antd';
+import dayjs from 'dayjs';
 import { SearchForm, Breadcrumb, Action } from '@/components';
 import { includes } from '@/utils/common';
 import { hasPermission } from '@/utils/auth';
@@ -19,7 +20,6 @@ import Rollback from './Rollback';
 import BatchDelete from './BatchDelete';
 import Ext1Console from './Ext1Console';
 import Ext2Console from './Ext2Console';
-import { PagePlaceholder } from '@/components';
 import styles from './index.module.scss';
 
 const RequestIndex: React.FC = () => {
@@ -118,9 +118,8 @@ const RequestIndex: React.FC = () => {
         <SearchForm.Item span={8} title="申请时间">
           <DatePicker.RangePicker
             value={f_s_date ? [
-              // 这里需要dayjs实例，暂时先用字符串
-              undefined, 
-              undefined
+              dayjs(f_s_date), 
+              dayjs(f_e_date || f_s_date)
             ] : undefined}
             onChange={updateDate}
             style={{ width: '100%' }}

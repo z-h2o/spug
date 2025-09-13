@@ -4,7 +4,8 @@
 import { create } from 'zustand';
 import http from '@/libs/http';
 import { message } from 'antd';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, merge } from 'lodash';
+import codes from '@/pages/system/role/codes';
 
 export interface SystemRoleRecord {
   id?: number;
@@ -12,6 +13,7 @@ export interface SystemRoleRecord {
   desc?: string;
   page_perms?: any;
   deploy_perms?: any;
+  group_perms?: number[];
 }
 
 interface SystemRoleState {
@@ -19,7 +21,7 @@ interface SystemRoleState {
   initPerms: Record<string, any>;
   records: SystemRoleRecord[];
   record: Partial<SystemRoleRecord>;
-  permissions: any[];
+  permissions: Record<string, Record<string, string[]>>;
   deployRel: Record<string, any>;
   isFetching: boolean;
   formVisible: boolean;
@@ -28,6 +30,7 @@ interface SystemRoleState {
   hostPermVisible: boolean;
   f_name?: string;
 
+  initPermissions: () => void;
   fetchRecords: () => Promise<void>;
   showForm: (info?: Partial<SystemRoleRecord>) => void;
   showPagePerm: (info: SystemRoleRecord) => void;
@@ -37,6 +40,7 @@ interface SystemRoleState {
   setPagePermVisible: (visible: boolean) => void;
   setDeployPermVisible: (visible: boolean) => void;
   setHostPermVisible: (visible: boolean) => void;
+  updateDeployRel: (key: 'envs' | 'apps', values: any[]) => void;
   setFName: (name: string) => void;
   getFilteredRecords: () => SystemRoleRecord[];
   getIdMap: () => Record<number, SystemRoleRecord>;
@@ -44,42 +48,67 @@ interface SystemRoleState {
   submitForm: (values: any) => Promise<void>;
 }
 
-const useSystemRoleStore = create<SystemRoleState>((set, get) => ({
-  allPerms: {},
-  initPerms: {},
-  records: [],
-  record: {},
-  permissions: [],
-  deployRel: {},
-  isFetching: false,
-  formVisible: false,
-  pagePermVisible: false,
-  deployPermVisible: false,
-  hostPermVisible: false,
-  f_name: '',
-
-  fetchRecords: async () => {
-    set({ isFetching: true });
-    try {
-      const res = await http.get('/api/account/role/');
-      set({ records: res.data || res, isFetching: false });
-    } catch (error) {
-      set({ isFetching: false });
+const useSystemRoleStore = create<SystemRoleState>((set, get) => {
+  // 初始化权限数据
+  const initPermissions = () => {
+    const allPerms: Record<string, string[]> = {};
+    const initPerms: Record<string, any> = {};
+    
+    for (const mod of codes) {
+      initPerms[mod.key] = {};
+      for (const page of mod.pages) {
+        initPerms[mod.key][page.key] = [];
+        allPerms[`${mod.key}.${page.key}`] = page.perms.map(x => x.key);
+      }
     }
-  },
+    
+    set({ allPerms, initPerms });
+  };
 
-  showForm: (info = {}) => {
-    set({ formVisible: true, record: info });
-  },
+  return {
+    allPerms: {},
+    initPerms: {},
+    records: [],
+    record: {},
+    permissions: cloneDeep(codes.reduce((acc, mod) => {
+      acc[mod.key] = mod.pages.reduce((pageAcc, page) => {
+        pageAcc[page.key] = [];
+        return pageAcc;
+      }, {} as any);
+      return acc;
+    }, {} as any)),
+    deployRel: {},
+    isFetching: false,
+    formVisible: false,
+    pagePermVisible: false,
+    deployPermVisible: false,
+    hostPermVisible: false,
+    f_name: '',
 
-  showPagePerm: (info) => {
-    // This would need the actual permission codes structure
-    set({ 
-      record: info, 
-      pagePermVisible: true,
-      // permissions: merge({}, get().initPerms, info.page_perms)
-    });
-  },
+    initPermissions,
+
+    fetchRecords: async () => {
+      set({ isFetching: true });
+      try {
+        const res = await http.get('/api/account/role/');
+        set({ records: res.data || res, isFetching: false });
+      } finally {
+        set({ isFetching: false });
+      }
+    },
+
+    showForm: (info = {}) => {
+      set({ formVisible: true, record: info });
+    },
+
+    showPagePerm: (info) => {
+      const { initPerms } = get();
+      set({ 
+        record: info, 
+        pagePermVisible: true,
+        permissions: merge({}, initPerms, info.page_perms || {})
+      });
+    },
 
   showDeployPerm: (info) => {
     set({
@@ -100,6 +129,13 @@ const useSystemRoleStore = create<SystemRoleState>((set, get) => ({
   setPagePermVisible: (visible) => set({ pagePermVisible: visible }),
   setDeployPermVisible: (visible) => set({ deployPermVisible: visible }),
   setHostPermVisible: (visible) => set({ hostPermVisible: visible }),
+  
+  updateDeployRel: (key: 'envs' | 'apps', values: any[]) => {
+    const { deployRel } = get();
+    const newDeployRel = { ...deployRel, [key]: values };
+    set({ deployRel: newDeployRel });
+  },
+  
   setFName: (name) => set({ f_name: name }),
 
   getFilteredRecords: () => {
@@ -127,6 +163,7 @@ const useSystemRoleStore = create<SystemRoleState>((set, get) => ({
       message.success('删除成功');
       get().fetchRecords();
     } catch (error) {
+      message.error('删除失败', error as any);
       // Error handled by http interceptor
     }
   },
@@ -139,9 +176,14 @@ const useSystemRoleStore = create<SystemRoleState>((set, get) => ({
       set({ formVisible: false });
       get().fetchRecords();
     } catch (error) {
+      message.error('操作失败', error as any);
       // Error handled by http interceptor
     }
   },
-}));
+  };
+});
+
+// 初始化权限数据
+useSystemRoleStore.getState().initPermissions();
 
 export default useSystemRoleStore;

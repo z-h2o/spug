@@ -1,3 +1,47 @@
 .roleUser {
   max-width: 300px;
 }
+
+.container {
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+      padding: 8px 12px;
+      text-align: left;
+      border: 1px solid #dfdfdf;
+      vertical-align: top;
+    }
+    
+    th {
+      background-color: #fafafa;
+      font-weight: 600;
+    }
+    
+    td {
+      background-color: #fff;
+    }
+  }
+}
+
+.groupItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  
+  :global(.ant-select) {
+    flex: 1;
+    margin-right: 8px;
+  }
+  
+  .delIcon {
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    
+    &:hover {
+      color: #ff4d4f;
+    }
+  }
+}

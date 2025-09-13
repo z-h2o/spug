@@ -17,6 +17,8 @@ export interface RepositoryRecord {
   created_by_user: string;
   remarks?: string;
   child?: RepositoryRecord[];
+  extra?: any[];
+  spug_version?: string;
 }
 
 export interface DeployConfig {

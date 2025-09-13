@@ -2,21 +2,15 @@
  * 欢迎页面
  */
 import React from 'react';
-import { Breadcrumb, PagePlaceholder } from '@/components';
+import { Card } from 'antd';
 
 const WelcomeIndex: React.FC = () => {
+  const nickname = localStorage.getItem('nickname') || '用户';
+  
   return (
-    <>
-      <Breadcrumb>
-        <Breadcrumb.Item>首页</Breadcrumb.Item>
-        <Breadcrumb.Item>欢迎</Breadcrumb.Item>
-      </Breadcrumb>
-      
-      <PagePlaceholder 
-        title="欢迎使用 Spug"
-        description="现代化的运维管理平台，功能正在完善中..."
-      />
-    </>
+    <Card>
+      <div>{nickname}, 欢迎你</div>
+    </Card>
   );
 };
 
