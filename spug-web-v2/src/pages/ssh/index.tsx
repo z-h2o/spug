@@ -22,10 +22,12 @@ import Terminal from './Terminal';
 import FileManager from './FileManager';
 import Setting from './Setting';
 import http from '@/libs/http';
-import { hasPermission, includes } from '@/utils/functools';
-import { cloneDeep, find, findIndex } from 'lodash';
+import { hasPermission } from '@/utils/auth';
+import { includes } from '@/utils/functools';
+import { cloneDeep, find, findIndex } from 'lodash-es';
 import styles from './index.module.scss';
 import { useLocation } from 'react-router-dom';
+import LogoSpugText from '@/assets/logo-spug-txt.png';
 
 let posX = 0;
 
@@ -58,6 +60,7 @@ const WebSSH: React.FC = () => {
     window.document.title = 'Spug web terminal';
     window.addEventListener('beforeunload', leaveTips);
     fetchNodes();
+    // gStore.fetchUserSettings();  // TODO: 添加全局状态管理
     return () => window.removeEventListener('beforeunload', leaveTips);
   }, []);
 
@@ -81,8 +84,8 @@ const WebSSH: React.FC = () => {
     http.get('/api/host/group/?with_hosts=1')
       .then((res: any) => {
         const tmp: Record<number, Host> = {};
-        setRawTreeData(res.treeData || res.data?.treeData || []);
-        setTreeData(res.treeData || res.data?.treeData || []);
+        setRawTreeData(res.treeData);
+        setTreeData(res.treeData);
         
         const loop = (data: Host[]) => {
           for (let item of data) {
@@ -94,7 +97,7 @@ const WebSSH: React.FC = () => {
           }
         };
         
-        loop(res.treeData || res.data?.treeData || []);
+        loop(res.treeData);
         setRawHostList(Object.values(tmp));
         
         const query = new URLSearchParams(location.search);
@@ -110,17 +113,13 @@ const WebSSH: React.FC = () => {
   function _openNode(node: Host, replace?: boolean) {
     const newNode = { ...node };
     newNode.vId = String(new Date().getTime());
-    
     if (replace) {
       const index = findIndex(hosts, { vId: node.vId });
-      if (index >= 0) {
-        const newHosts = [...hosts];
-        newHosts[index] = newNode;
-        setHosts(newHosts);
-      }
+      if (index >= 0) hosts[index] = newNode;
     } else {
-      setHosts([...hosts, newNode]);
+      hosts.push(newNode);
     }
+    setHosts(cloneDeep(hosts));
     setActiveId(newNode.vId);
   }
 
@@ -133,24 +132,21 @@ const WebSSH: React.FC = () => {
   function handleRemove(key: string, target: string) {
     const index = findIndex(hosts, x => x.vId === key);
     if (index === -1) return;
-    
-    let newHosts = [...hosts];
-    
     switch (target) {
       case 'self':
-        newHosts.splice(index, 1);
-        setHosts(newHosts);
-        if (newHosts.length > index) {
-          setActiveId(newHosts[index].vId);
-        } else if (newHosts.length) {
-          setActiveId(newHosts[index - 1].vId);
+        hosts.splice(index, 1);
+        setHosts([...hosts]);
+        if (hosts.length > index) {
+          setActiveId(hosts[index].vId);
+        } else if (hosts.length) {
+          setActiveId(hosts[index - 1].vId);
         } else {
           setActiveId(undefined);
         }
         break;
       case 'right':
-        newHosts.splice(index + 1, newHosts.length);
-        setHosts(newHosts);
+        hosts.splice(index + 1, hosts.length);
+        setHosts([...hosts]);
         setActiveId(key);
         break;
       case 'other':
@@ -213,25 +209,24 @@ const WebSSH: React.FC = () => {
     return (
       <Dropdown 
         trigger={['contextMenu']} 
-        overlay={
-          <Menu onClick={({ key, domEvent }) => handleTabAction(key, host, domEvent as any)}>
-            <Menu.Item key="copy" icon={<CopyOutlined />}>复制窗口</Menu.Item>
-            <Menu.Item key="reconnect" icon={<ReloadOutlined />}>重新连接</Menu.Item>
-            <Menu.Item 
-              key="rClose"
-              icon={<VerticalAlignBottomOutlined style={{ transform: 'rotate(90deg)' }} />}
-            >
-              关闭右侧
-            </Menu.Item>
-            <Menu.Item 
-              key="oClose"
-              icon={<VerticalAlignMiddleOutlined style={{ transform: 'rotate(90deg)' }} />}
-            >
-              关闭其他
-            </Menu.Item>
-            <Menu.Item key="aClose" icon={<CloseOutlined />}>关闭所有</Menu.Item>
-          </Menu>
-        }
+        menu={{
+          onClick: ({ key, domEvent }) => handleTabAction(key, host, domEvent as any),
+          items: [
+            { key: 'copy', icon: <CopyOutlined />, label: '复制窗口' },
+            { key: 'reconnect', icon: <ReloadOutlined />, label: '重新连接' },
+            { 
+              key: 'rClose', 
+              icon: <VerticalAlignBottomOutlined style={{ transform: 'rotate(90deg)' }} />, 
+              label: '关闭右侧' 
+            },
+            { 
+              key: 'oClose', 
+              icon: <VerticalAlignMiddleOutlined style={{ transform: 'rotate(90deg)' }} />, 
+              label: '关闭其他' 
+            },
+            { key: 'aClose', icon: <CloseOutlined />, label: '关闭所有' }
+          ]
+        }}
       >
         <div 
           className={styles.tabRender} 
@@ -259,7 +254,7 @@ const WebSSH: React.FC = () => {
     >
       <div className={styles.sider} style={{ width }}>
         <a className={styles.logo} href="/host" target="_blank" rel="noopener noreferrer">
-          <div style={{ color: 'white', fontSize: '18px', fontWeight: 'bold' }}>Spug</div>
+          <img src={LogoSpugText} alt="logo" />
         </a>
         <div className={styles.hosts}>
           <Spin spinning={fetching}>
@@ -319,7 +314,7 @@ const WebSSH: React.FC = () => {
               {sshMode ? (
                 <Terminal id={item.id} vId={item.vId!} activeId={activeId} />
               ) : (
-                <div className={styles.fileManager}>
+                <div className={styles.fileManger}>
                   <FileManager id={item.id} />
                 </div>
               )}

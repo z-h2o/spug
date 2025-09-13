@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import { Table, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { Action, TableCard, AuthButton } from '@/components';
-import { hasPermission } from '@/utils/functools';
+import { hasPermission } from '@/utils/auth';
 import { useNavigate } from 'react-router-dom';
 import useConfigAppStore, { ConfigAppRecord } from '@/stores/configAppStore';
 

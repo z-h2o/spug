@@ -8,9 +8,10 @@ import 'xterm/css/xterm.css';
 
 interface OutViewProps {
   setTerm: (term: Terminal) => void;
+  theme?: any;
 }
 
-const OutView: React.FC<OutViewProps> = ({ setTerm }) => {
+const OutView: React.FC<OutViewProps> = ({ setTerm, theme }) => {
   const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,7 +25,8 @@ const OutView: React.FC<OutViewProps> = ({ setTerm }) => {
         theme: { 
           background: '#fff', 
           foreground: '#000',
-          selectionBackground: '#999'
+          selectionBackground: '#999',
+          ...theme
         }
       });
       

@@ -3,7 +3,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Transfer, Tabs } from 'antd';
-import { hasPermission } from '@/utils/functools';
+import { hasPermission } from '@/utils/auth';
 import useConfigAppStore from '@/stores/configAppStore';
 import useConfigServiceStore from '@/stores/configServiceStore';
 

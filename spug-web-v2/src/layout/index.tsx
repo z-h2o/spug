@@ -11,7 +11,7 @@ import routes from '@/routes';
 import { RouteConfig } from '@/types/route';
 import Sider from './Sider';
 import Header from './Header';
-import Footer from './Footer';
+// import Footer from './Footer';
 import styles from './index.module.scss';
 
 const MainLayout: React.FC = () => {
@@ -76,7 +76,7 @@ const MainLayout: React.FC = () => {
             </Suspense>
           </div>
         </Layout.Content>
-        <Footer collapsed={collapsed} />
+        {/* <Footer collapsed={collapsed} /> */}
       </Layout>
     </Layout>
   );

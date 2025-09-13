@@ -52,7 +52,7 @@ const Rollback: React.FC = () => {
   
   // 过滤可回滚的版本
   const rollbackOptions = records.filter(x => 
-    x.rb_id && 
+    x.repository_id && 
     x.deploy_id === deploy_id && 
     ['3', '-3'].includes(x.status)
   );

@@ -51,6 +51,8 @@ const defaultTerminalSettings: TerminalSettings = {
 };
 
 const WebSSHTerminal: React.FC<TerminalProps> = ({ id, vId, activeId }) => {
+  console.log(`Terminal组件渲染 - id:${id}, vId:${vId}, activeId:${activeId}`);
+  
   const container = useRef<HTMLDivElement>(null);
   const [term] = useState(new Terminal());
   const [fitPlugin] = useState(new FitAddon());
@@ -74,7 +76,7 @@ const WebSSHTerminal: React.FC<TerminalProps> = ({ id, vId, activeId }) => {
       }
       return true;
     });
-
+    
     term.open(container.current);
     term.write('WebSocket connecting ... ');
     
@@ -88,8 +90,12 @@ const WebSSHTerminal: React.FC<TerminalProps> = ({ id, vId, activeId }) => {
       term.focus();
       fitTerminal();
     };
-    socket.onclose = () => {
+    socket.onclose = e => {
       setTimeout(() => term.write('\r\n\r\n\x1b[31mConnection is closed.\x1b[0m\r\n'), 200);
+    };
+    socket.onerror = e => {
+      console.error('WebSocket错误:', e);
+      term.write('\r\n\r\n\x1b[31mWebSocket connection error.\x1b[0m\r\n');
     };
     
     term.onData(data => socket.send(JSON.stringify({ data })));
@@ -105,19 +111,20 @@ const WebSSHTerminal: React.FC<TerminalProps> = ({ id, vId, activeId }) => {
       window.removeEventListener('resize', fitTerminal);
       if (socket) socket.close();
     };
-  }, [id]);
+  }, []);
 
   useEffect(() => {
     term.options.fontSize = terminalSettings.fontSize;
     term.options.fontFamily = terminalSettings.fontFamily;
     term.options.theme = terminalSettings.styles;
-  }, [terminalSettings, term]);
+  }, [terminalSettings]);
 
   useEffect(() => {
     if (vId === activeId) {
       setTimeout(() => term.focus());
     }
-  }, [activeId, vId, term]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeId]);
 
   useLayoutEffect(fitTerminal);
 

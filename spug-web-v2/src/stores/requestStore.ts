@@ -37,6 +37,7 @@ export interface RequestRecord {
   mode?: string;
   key?: number;
   rb_id?: number;
+  repository_id?: number;
 }
 
 export interface RequestCounter {

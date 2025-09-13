@@ -119,7 +119,7 @@ const Console: React.FC = () => {
       
       <Spin spinning={fetching} wrapperClassName={styles.spinBox}>
         <div className={styles.out}>
-          <OutView setTerm={handleSetTerm} />
+          <OutView setTerm={handleSetTerm} theme={{ background: '#fafafa' }} />
         </div>
       </Spin>
     </Modal>
