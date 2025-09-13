@@ -1,35 +1,38 @@
 /**
  * 构建仓库控制台组件
  */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FullscreenOutlined, FullscreenExitOutlined, LoadingOutlined } from '@ant-design/icons';
-import { FitAddon } from 'xterm-addon-fit';
 import { Terminal } from 'xterm';
 import { Modal, Steps, Spin } from 'antd';
 import { getToken } from '@/utils/auth';
 import http from '@/libs/http';
 import useRepositoryStore from '@/stores/repositoryStore';
-import 'xterm/css/xterm.css';
+import OutView from '../request/OutView';
 import styles from './index.module.scss';
 
 const Console: React.FC = () => {
-  const el = useRef<HTMLDivElement>(null);
-  const [term] = useState(new Terminal({ disableStdin: true }));
   const [fullscreen, setFullscreen] = useState(false);
   const [step, setStep] = useState(0);
   const [status, setStatus] = useState<'wait' | 'process' | 'error' | 'finish'>('process');
   const [fetching, setFetching] = useState(true);
-  
+  const termsRef = useRef<Terminal | null>(null);
   const { record, setLogVisible, fetchRecords } = useRepositoryStore();
 
+  let socket: WebSocket | null = null;
+
   useEffect(() => {
-    let socket: WebSocket | null = null;
-    
-    initialTerm();
-    
+    return () => {
+      if (socket) {
+        socket.close();
+      }
+    };
+  }, []);
+
+  const getRecord = useCallback(() => {
     http.get(`/api/repository/${record.id}/`)
       .then((res: any) => {
-        term.write(res.data || res);
+        termsRef.current?.write(res.data || res);
         setStep(res.step);
         if (res.status === '1') {
           socket = makeSocket(res.index);
@@ -38,13 +41,8 @@ const Console: React.FC = () => {
         }
       })
       .finally(() => setFetching(false));
-      
-    return () => {
-      if (socket) {
-        socket.close();
-      }
-    };
-  }, [record.id, term]);
+  }, [record.id]);
+
 
   const makeSocket = (index = 0) => {
     const token = record.spug_version;
@@ -62,7 +60,7 @@ const Console: React.FC = () => {
       } else {
         index += 1;
         const { data, step: newStep, status: newStatus } = JSON.parse(e.data);
-        if (data !== undefined) term.write(data);
+        if (data !== undefined) termsRef.current?.write(data);
         if (newStep !== undefined) setStep(newStep);
         if (newStatus !== undefined) setStatus(newStatus);
       }
@@ -70,39 +68,18 @@ const Console: React.FC = () => {
     
     socket.onerror = () => {
       setStatus('error');
-      term.reset();
-      term.write('\u001b[31mWebsocket connection failed!\u001b[0m');
+      termsRef.current?.reset();
+      termsRef.current?.write('\u001b[31mWebsocket connection failed!\u001b[0m');
     };
     
     return socket;
   };
 
-  useEffect(() => {
-    // @ts-ignore
-    term.fit && term.fit();
-  }, [fullscreen, term]);
 
-  const initialTerm = () => {
-    const fitPlugin = new FitAddon();
-    term.loadAddon(fitPlugin);
-    term.options.fontFamily = 'Source Code Pro, Courier New, Courier, Monaco, monospace, PingFang SC, Microsoft YaHei';
-    term.options.theme = { background: '#fafafa', foreground: '#000' };
-    
-    term.attachCustomKeyEventHandler((arg) => {
-      if (arg.ctrlKey && arg.code === 'KeyC' && arg.type === 'keydown') {
-        document.execCommand('copy');
-        return false;
-      }
-      return true;
-    });
-    
-    if (el.current) {
-      term.open(el.current);
-      // @ts-ignore
-      term.fit = () => fitPlugin.fit();
-      fitPlugin.fit();
-    }
-  };
+  const handleSetTerm = useCallback((term: Terminal) => {
+    termsRef.current = term;
+    getRecord();
+  }, [getRecord]);
 
   const handleClose = () => {
     fetchRecords();
@@ -120,7 +97,7 @@ const Console: React.FC = () => {
   return (
     <Modal
       open
-      width={fullscreen ? '100%' : 1000}
+      width={fullscreen ? '100%' : '70%'}
       title={[
         <span key="1">构建控制台</span>,
         <div key="2" className={styles.fullscreen} onClick={() => setFullscreen(!fullscreen)}>
@@ -129,7 +106,7 @@ const Console: React.FC = () => {
       ]}
       footer={null}
       onCancel={handleClose}
-      className={styles.console}
+      className={`${styles.console}`}
       maskClosable={false}
     >
       <Steps current={step} status={status}>
@@ -140,9 +117,9 @@ const Console: React.FC = () => {
         <StepItem title="执行打包" step={4} />
       </Steps>
       
-      <Spin spinning={fetching}>
+      <Spin spinning={fetching} wrapperClassName={styles.spinBox}>
         <div className={styles.out}>
-          <div ref={el} />
+          <OutView setTerm={handleSetTerm} />
         </div>
       </Spin>
     </Modal>

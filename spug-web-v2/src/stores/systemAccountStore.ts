@@ -100,7 +100,8 @@ const useSystemAccountStore = create<SystemAccountState>((set, get) => ({
       message.success('操作成功');
       set({ formVisible: false });
       get().fetchRecords();
-    } catch {
+    } catch (error) {
+      console.error('submitForm - 请求失败:', error);
       // Error handled by http interceptor
     }
   },

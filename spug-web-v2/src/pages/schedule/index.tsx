@@ -37,7 +37,7 @@ const Schedule: React.FC = () => {
       </Breadcrumb>
       
       <SearchForm>
-        <SearchForm.Item span={6} title="状态">
+        <SearchForm.Item span={8} title="状态">
           <Select 
             allowClear 
             value={f_status} 
@@ -52,7 +52,7 @@ const Schedule: React.FC = () => {
           </Select>
         </SearchForm.Item>
         
-        <SearchForm.Item span={6} title="类型">
+        <SearchForm.Item span={8} title="类型">
           <Select 
             allowClear 
             value={f_type} 
@@ -68,7 +68,7 @@ const Schedule: React.FC = () => {
           </Select>
         </SearchForm.Item>
         
-        <SearchForm.Item span={6} title="名称">
+        <SearchForm.Item span={8} title="名称">
           <Input 
             allowClear 
             value={f_name} 

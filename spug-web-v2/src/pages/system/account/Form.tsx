@@ -20,7 +20,13 @@ const SystemAccountForm: React.FC = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   
   const { record, setFormVisible, submitForm } = useSystemAccountStore();
-  const { records: roles } = useSystemRoleStore();
+  const { records: roles, fetchRecords: fetchRoles } = useSystemRoleStore();
+
+  useEffect(() => {
+    if (roles.length === 0) {
+      fetchRoles();
+    }
+  }, [roles, fetchRoles]);
 
   useEffect(() => {
     http.get('/api/alarm/contact/?only_push=1')
@@ -28,15 +34,11 @@ const SystemAccountForm: React.FC = () => {
       .catch(() => setContacts([]));
   }, []);
 
-  const handleSubmit = async () => {
-    try {
-      setLoading(true);
-      const values = await form.validateFields();
-      await submitForm(values);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-    }
+  const handleSubmit = () => {
+    setLoading(true);
+    const formData = form.getFieldsValue();
+    formData.id = record.id;
+    submitForm(formData).finally(() => setLoading(false));
   };
 
   return (

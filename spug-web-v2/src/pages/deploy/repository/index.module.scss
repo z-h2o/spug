@@ -11,18 +11,35 @@
     cursor: pointer;
     color: rgba(0, 0, 0, .45);
     margin-right: 56px;
+    z-index: 10;
+
+    &:hover {
+      color: #000;
+    }
   }
 
-  .fullscreen:hover {
-    color: #000;
+  .spinBox {
+    height: 65vh !important;
+    overflow: hidden;
+  }
+  :global(.ant-spin-container) {
+    height: inherit;
   }
 
   .out {
     margin-top: 24px;
-    padding: 8px 0 8px 15px;
     border: 1px solid #d9d9d9;
     border-radius: 4px;
-    background-color: #fafafa;
+    height: calc(100% - 24px);
+    overflow: auto;
+    position: relative;
+
+    // 终端容器样式
+    > div {
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+    }
   }
 }
 
