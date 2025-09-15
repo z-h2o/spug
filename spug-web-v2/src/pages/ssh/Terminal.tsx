@@ -8,6 +8,17 @@ import { getToken } from '@/utils/auth';
 import 'xterm/css/xterm.css';
 import styles from './index.module.scss';
 
+// 扩展 Terminal 类型以访问内部 API（xterm 5.0）
+declare module 'xterm' {
+  interface Terminal {
+    _core?: {
+      _renderService?: {
+        clear(): void;
+      };
+    };
+  }
+}
+
 interface TerminalProps {
   id: number;
   vId: string;
@@ -57,20 +68,16 @@ const WebSSHTerminal: React.FC<TerminalProps> = ({ id, vId, activeId }) => {
   const [term] = useState(new Terminal());
   const [fitPlugin] = useState(new FitAddon());
   const [terminalSettings] = useState(defaultTerminalSettings);
-  const hasInitializedRef = useRef(false);
   const socketRef = useRef<WebSocket | null>(null);
-  const openedRef = useRef(false);
-  const destroyedRef = useRef(false);
+  const initializedRef = useRef(false);
+  const connectedRef = useRef(false);
 
   useEffect(() => {
-    if (!container.current || hasInitializedRef.current) return;
-
-    console.log('Terminal useEffect 执行 - 初始化终端');
-    destroyedRef.current = false;
-    openedRef.current = false;
-    hasInitializedRef.current = true;
+    if (!container.current || initializedRef.current) return;
+    initializedRef.current = true;
     
     term.loadAddon(fitPlugin);
+    // 使用 xterm 5.0 的 options API
     term.options.fontSize = terminalSettings.fontSize;
     term.options.fontFamily = terminalSettings.fontFamily;
     term.options.theme = terminalSettings.styles;
@@ -100,62 +107,36 @@ const WebSSHTerminal: React.FC<TerminalProps> = ({ id, vId, activeId }) => {
     const ws = new WebSocket(`${protocol}//${window.location.host}/api/ws/ssh/${id}/?x-token=${token}`);
     socketRef.current = ws;
     
-    ws.onmessage = e => {
-      if (!destroyedRef.current) term.write(e.data);
-    };
+    ws.onmessage = e => term.write(e.data);
     ws.onopen = () => {
-      openedRef.current = true;
-      if (!destroyedRef.current) {
-        term.write('ok');
-        term.focus();
-        fitTerminal();
-      } else {
-        try { ws.close(); } catch {}
-      }
+      connectedRef.current = true; // 标记连接成功
+      term.write('ok');
+      term.focus();
+      fitTerminal();
     };
     ws.onclose = e => {
-      // 仅在真正建立过连接后再提示关闭，忽略StrictMode初次挂载的早期关闭噪声
-      if (!destroyedRef.current && openedRef.current) {
+      // 只有在真正建立过连接后才显示关闭消息
+      if (connectedRef.current) {
         setTimeout(() => term.write('\r\n\r\n\x1b[31mConnection is closed.\x1b[0m\r\n'), 200);
       }
-    };
-    ws.onerror = e => {
-      console.error('WebSocket错误:', e);
-      // 忽略StrictMode导致的早期错误提示，只有建立后再提示
-      if (!destroyedRef.current && openedRef.current) {
-        term.write('\r\n\r\n\x1b[31mWebSocket connection error.\x1b[0m\r\n');
-      }
+      connectedRef.current = false;
     };
     
-    term.onData(data => {
-      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-        socketRef.current.send(JSON.stringify({ data }));
-      }
-    });
+    term.onData(data => ws.send(JSON.stringify({ data })));
     term.onResize(({ cols, rows }) => {
-      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-        socketRef.current.send(JSON.stringify({ resize: [cols, rows] }));
+      if (ws.readyState === 1) {
+        ws.send(JSON.stringify({ resize: [cols, rows] }));
       }
     });
     
     window.addEventListener('resize', fitTerminal);
     return () => {
-      console.log('Terminal useEffect 清理');
-      destroyedRef.current = true;
       window.removeEventListener('resize', fitTerminal);
-      try {
-        if (socketRef.current) {
-          if (socketRef.current.readyState === WebSocket.OPEN) {
-            socketRef.current.close();
-          } else if (socketRef.current.readyState === WebSocket.CONNECTING) {
-            // 等到真正open后由onopen里检测destroyedRef再关闭，避免报错日志
-            socketRef.current.onopen = () => socketRef.current && socketRef.current.close();
-          }
-        }
-      } catch {}
-      socketRef.current = null;
-      openedRef.current = false;
-      // 不在开发StrictMode清理周期销毁term，避免二次初始化时_renderService缺失
+      if (ws) {
+        connectedRef.current = false; // 防止显示关闭消息
+        ws.close();
+      }
+      initializedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -177,16 +158,24 @@ const WebSSHTerminal: React.FC<TerminalProps> = ({ id, vId, activeId }) => {
 
   function fitTerminal() {
     if (vId === activeId) {
-      // 延迟执行，等待容器完成布局
-      requestAnimationFrame(() => {
+      try {
+        // xterm 5.0 中使用 FitAddon 的 fit() 方法
+        fitPlugin.fit();
+      } catch (error) {
+        // 如果 fit() 失败，回退到手动计算尺寸
         const dims = fitPlugin.proposeDimensions();
-        if (!dims || !term || !dims.cols || !dims.rows) return;
-        if (term.rows !== dims.rows || term.cols !== dims.cols) {
-          try {
+        if (dims && dims.cols && dims.rows) {
+          if (term.rows !== dims.rows || term.cols !== dims.cols) {
+            // 尝试清理渲染服务（如果存在）
+            try {
+              if (term._core && term._core._renderService) {
+                term._core._renderService.clear();
+              }
+            } catch {}
             term.resize(dims.cols, dims.rows);
-          } catch {}
+          }
         }
-      });
+      }
     }
   }
 
