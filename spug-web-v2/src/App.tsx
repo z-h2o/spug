@@ -24,7 +24,12 @@ message.config({
 const App: React.FC = () => {
   return (
     <ConfigProvider locale={zhCN}>
-      <BrowserRouter>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <Suspense fallback={
           <div style={{
             display: 'flex',

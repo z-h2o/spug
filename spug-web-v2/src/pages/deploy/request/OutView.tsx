@@ -13,10 +13,17 @@ interface OutViewProps {
 
 const OutView: React.FC<OutViewProps> = ({ setTerm, theme }) => {
   const elementRef = useRef<HTMLDivElement>(null);
+  const termRef = useRef<Terminal | null>(null);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
+    // 防止重复初始化
+    if (initializedRef.current || !elementRef.current) return;
+    
     const timer = setTimeout(() => {
-      if (!elementRef.current) return;
+      if (!elementRef.current || initializedRef.current) return;
+      
+      initializedRef.current = true;
 
       const fitPlugin = new FitAddon();
       const term = new Terminal({ 
@@ -42,13 +49,21 @@ const OutView: React.FC<OutViewProps> = ({ setTerm, theme }) => {
       
       term.open(elementRef.current);
       fitPlugin.fit();
+      
+      termRef.current = term;
       setTerm(term);
     }, 100);
 
     return () => {
       clearTimeout(timer);
+      // 组件卸载时清理
+      if (termRef.current) {
+        termRef.current.dispose();
+        termRef.current = null;
+      }
+      initializedRef.current = false;
     };
-  }, [setTerm]);
+  }, [setTerm, theme]);
 
   return (
     <div style={{ padding: '8px 0 0 15px' }}>

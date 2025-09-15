@@ -3,7 +3,7 @@
  */
 import React, { useEffect } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
-import { Select, DatePicker } from 'antd';
+import { Select, DatePicker, Space } from 'antd';
 import dayjs from 'dayjs';
 import { SearchForm, Breadcrumb, Action } from '@/components';
 import { includes } from '@/utils/common';
@@ -160,7 +160,7 @@ const RequestIndex: React.FC = () => {
       
       {/* 控制台组件 */}
       {tabs.length > 0 && (
-        <div className={styles.miniConsole}>
+        <Space className={styles.miniConsole} direction="vertical" size={12}>
           {tabs.map(item => 
             item.id ? (
               item.app_extend === '1' ? (
@@ -170,7 +170,7 @@ const RequestIndex: React.FC = () => {
               )
             ) : null
           )}
-        </div>
+        </Space>
       )}
     </div>
   );
