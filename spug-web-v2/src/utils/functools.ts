@@ -1,44 +1,4 @@
-/**
- * 功能工具函数
- */
-
-interface Permission {
-  isReady: boolean;
-  isSuper: boolean;
-  permissions: string[];
-}
-
-let Permission: Permission = {
-  isReady: false,
-  isSuper: false,
-  permissions: []
-};
-
-export let X_TOKEN: string | null;
 export const isMobile = /Android|iPhone/i.test(navigator.userAgent);
-
-export function updatePermissions() {
-  X_TOKEN = localStorage.getItem('token');
-  Permission.isReady = true;
-  Permission.isSuper = localStorage.getItem('is_supper') === 'true';
-  try {
-    Permission.permissions = JSON.parse(localStorage.getItem('permissions') || '[]');
-  } catch (e) {
-    Permission.permissions = [];
-  }
-}
-
-// 前端页面的权限判断(仅作为前端功能展示的控制，具体权限控制应在后端实现)
-export function hasPermission(strCode?: string): boolean {
-  const { isSuper, permissions } = Permission;
-  if (!strCode || isSuper) return true;
-  for (let or_item of strCode.split('|')) {
-    if (isSubArray(permissions, or_item.split('&'))) {
-      return true;
-    }
-  }
-  return false;
-}
 
 export function clsNames(...args: (string | undefined | null | false)[]): string {
   return args.filter(x => x).join(' ');
@@ -53,7 +13,7 @@ function isInclude(s: string, keys: string | string[]): boolean {
     }
     return false;
   } else {
-    let k = keys.toLowerCase();
+    const k = keys.toLowerCase();
     return s.toLowerCase().includes(k);
   }
 }
@@ -61,7 +21,7 @@ function isInclude(s: string, keys: string | string[]): boolean {
 // 字符串包含判断
 export function includes(s: string | string[], keys: string | string[]): boolean {
   if (Array.isArray(s)) {
-    for (let i of s) {
+    for (const i of s) {
       if (isInclude(i, keys)) return true;
     }
     return false;
@@ -77,7 +37,7 @@ export function cleanCommand(text?: string): string {
 
 //  数组包含关系判断
 export function isSubArray(parent: string[], child: string[]): boolean {
-  for (let item of child) {
+  for (const item of child) {
     if (!parent.includes(item.trim())) {
       return false;
     }
@@ -93,8 +53,8 @@ export function trimFixed(data: number, bit: number): string {
 // 日期
 export function human_date(date?: Date): string {
   const now = date || new Date();
-  let month = now.getMonth() + 1;
-  let day = now.getDate();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
   return `${now.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
 }
 
