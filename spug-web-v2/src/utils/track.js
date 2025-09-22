@@ -25,7 +25,10 @@ export class TrackingSDK {
         maxSize: 100
       },
       debug: false,
-      fallbackSender: false, // 是否启用发送失败时的降级方案
+      // 日志输出到页面
+      logToPage: false,
+      // 是否启用发送失败时的降级方案
+      fallbackSender: false,
       dataProcessor: (data) => data,
       beforeSend: (data) => data,
       afterSend: (response, data) => { },
@@ -384,6 +387,25 @@ export class TrackingSDK {
     }
   }
 
+  getPageInfo() {
+    return {
+      title: document.title,
+      referrer: document.referrer,
+      viewport: {
+        width: window.innerWidth,
+        height: window.innerHeight
+      }
+    }
+  }
+
+  getUser() {
+    return {
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    }
+  }
+
   buildTrackingData(element, event = null) {
     const rect = element.getBoundingClientRect();
 
@@ -407,20 +429,9 @@ export class TrackingSDK {
         height: Math.round(rect.height)
       },
 
-      page: {
-        title: document.title,
-        referrer: document.referrer,
-        viewport: {
-          width: window.innerWidth,
-          height: window.innerHeight
-        }
-      },
+      page: this.getPageInfo(),
 
-      user: {
-        userAgent: navigator.userAgent,
-        language: navigator.language,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-      },
+      user: this.getUser(),
 
       trigger: element.getAttribute('data-track-trigger') || 'click',
       custom: {}
@@ -475,7 +486,19 @@ export class TrackingSDK {
 
   // 主动发送
   sendTrack(data = {}) {
-    this.track(data);
+    // 组装基本数据
+    const value = this.adptorData(data);
+    this.track(value);
+  }
+
+  adptorData(data) {
+    return {
+      page: this.getPageInfo(),
+      user: this.getUser(),
+      ...data,
+      // 主动调用
+      trigger: 'manual',
+    }
   }
 
   startBatchProcessor() {
@@ -648,22 +671,12 @@ export class TrackingSDK {
   }
 
   log(level, message, ...args) {
-    if (!this.config.debug && level === 'info') return;
+    if (!this.config.logToPage) return;
 
     const timestamp = new Date().toLocaleTimeString();
     const logMessage = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
 
     console[level](logMessage, ...args);
-
-    // 输出到页面控制台
-    const consoleEl = document.getElementById('console-log');
-    if (consoleEl) {
-      const div = document.createElement('div');
-      div.style.color = level === 'error' ? '#ff6b6b' : level === 'warn' ? '#ffa726' : '#00ff00';
-      div.textContent = `${logMessage} ${args.length > 0 ? JSON.stringify(args) : ''}`;
-      consoleEl.appendChild(div);
-      consoleEl.scrollTop = consoleEl.scrollHeight;
-    }
   }
 
   // 生成或获取元素的唯一追踪 ID
